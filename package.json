@@ -1,0 +1,45 @@
+{
+  "name": "darshan-transport-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "nodemon --exec node -r tsconfig-paths/register -r ts-node/register src/server.ts",
+    "clean": "if exist dist rmdir /s /q dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.1",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.15.16",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "module-alias": "^2.2.3",
+    "mongoose": "^8.14.1",
+    "morgan": "^1.10.0",
+    "mssql": "^11.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "_moduleAliases": {
+    "@config": "dist/config",
+    "@controllers": "dist/controllers",
+    "@interfaces": "dist/interfaces",
+    "@routes": "dist/routes",
+    "@services": "dist/services",
+    "@utils": "dist/utils"
+  },
+  "devDependencies": {
+    "@types/module-alias": "^2.0.4",
+    "@types/mssql": "^9.1.7",
+    "nodemon": "^3.1.10",
+    "tsconfig-paths": "^4.2.0"
+  }
+}
