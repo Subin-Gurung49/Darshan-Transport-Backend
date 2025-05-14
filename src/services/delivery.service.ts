@@ -2,18 +2,12 @@ import { sql } from '../config/db';
 import { DeliveryStatus } from '../interfaces/delivery.interface';
 
 export const checkDeliveryStatus = async (series: string, invoiceNumber: string): Promise<DeliveryStatus> => {
-  const challanCode = `${series}/${invoiceNumber.padStart(6, '0')}`;
-  
   try {
     // Check if delivered (in GoodsReceipt_Master)
     const deliveredResult = await sql.query`
-      SELECT TOP 1 
-        fm.ToCode, 
-        am.[Area Name] AS ToName
-      FROM GoodsReceipt_Master gm
-      JOIN FreightChallan_Master fm ON gm.Challan = fm.ChallanCode
-      JOIN Area_master am ON fm.ToCode = am.AreaCode
-      WHERE gm.Challan = ${challanCode}
+      SELECT *
+      FROM GoodsReceipt_Details
+      WHERE DSeries = ${series} AND CNumber = ${parseInt(invoiceNumber, 10)}
     `;
     
     if (deliveredResult.recordset.length > 0) {
@@ -25,15 +19,9 @@ export const checkDeliveryStatus = async (series: string, invoiceNumber: string)
     
     // Check if in transit (in FreightChallan_Master only)
     const transitResult = await sql.query`
-      SELECT 
-        fm.FromCode,
-        fm.ToCode,
-        amFrom.[Area Name] AS FromName,
-        amTo.[Area Name] AS ToName
-      FROM FreightChallan_Master fm
-      JOIN Area_master amFrom ON fm.FromCode = amFrom.AreaCode
-      JOIN Area_master amTo ON fm.ToCode = amTo.AreaCode
-      WHERE fm.ChallanCode = ${challanCode}
+      SELECT *
+      FROM FreightChallan_Master
+      WHERE DSeries = ${series} AND CNumber = ${parseInt(invoiceNumber, 10)}
     `;
     
     if (transitResult.recordset.length > 0) {

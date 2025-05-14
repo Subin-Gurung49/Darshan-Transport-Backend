@@ -3,6 +3,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { connectToDatabase } from './config/db';
 import router from './routes';
+import routes from './routes/index';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api', router);
+app.use('/', routes);
 
 // Database connection
 connectToDatabase().catch(err => {

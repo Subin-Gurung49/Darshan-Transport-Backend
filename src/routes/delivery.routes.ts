@@ -7,7 +7,7 @@ import { getAllSeries } from '@services/series.service';
 
 const router = Router();
 
-router.get('/series', async (req: Request, res: Response) => {
+router.get('/series', async (req, res) => {
   try {
     const series = await getAllSeries();
     res.json(series);

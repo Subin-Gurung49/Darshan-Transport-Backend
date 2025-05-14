@@ -21,10 +21,13 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "ioredis": "^5.6.1",
     "module-alias": "^2.2.3",
     "mongoose": "^8.14.1",
     "morgan": "^1.10.0",
     "mssql": "^11.0.1",
+    "redis": "^5.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },

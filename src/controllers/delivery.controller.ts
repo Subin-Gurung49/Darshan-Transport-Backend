@@ -42,42 +42,76 @@ export const checkDeliveryStatus = async (
       };
     }
 
-    // Check if in transit (in CNOTE table)
-    const inTransitResult = await sql.query`
+    // Check if CNote exists in CNOTE table
+    const cNoteResult = await sql.query`
       SELECT 
-    c.[Consignee],
-    c.[Consigner],
-    fromArea.[Area Name] AS FromPlace,
-    toArea.[Area Name] AS ToPlace,
-    consignee.[Name] AS ConsigneeName,
-    consigner.[Name] AS ConsignerName
-  FROM [CNOTE] c
-  LEFT JOIN [CCMaster] consignee ON c.[Consignee] = consignee.[CC_CODE]
-  LEFT JOIN [CCMaster] consigner ON c.[Consigner] = consigner.[CC_CODE]
-  LEFT JOIN [Area_master] fromArea ON c.[FromPlace] = fromArea.[AreaCode]
-  LEFT JOIN [Area_master] toArea ON c.[ToPlace] = toArea.[AreaCode]
-  WHERE c.[CNote] = ${cnote}
-`;
+        c.[Consignee],
+        c.[Consigner],
+        fromArea.[Area Name] AS FromPlace,
+        toArea.[Area Name] AS ToPlace,
+        consignee.[Name] AS ConsigneeName,
+        consigner.[Name] AS ConsignerName
+      FROM [CNOTE] c
+      LEFT JOIN [CCMaster] consignee ON c.[Consignee] = consignee.[CC_CODE]
+      LEFT JOIN [CCMaster] consigner ON c.[Consigner] = consigner.[CC_CODE]
+      LEFT JOIN [Area_master] fromArea ON c.[FromPlace] = fromArea.[AreaCode]
+      LEFT JOIN [Area_master] toArea ON c.[ToPlace] = toArea.[AreaCode]
+      WHERE c.[CNote] = ${cnote}
+    `;
 
-    if (inTransitResult.recordset.length > 0) {
+    if (cNoteResult.recordset.length === 0) {
       return {
-        status: "on the way",
-        consigner: inTransitResult.recordset[0].ConsignerName,
-        consignee: inTransitResult.recordset[0].ConsigneeName,
-        from: inTransitResult.recordset[0].FromPlace,
-        to: inTransitResult.recordset[0].ToPlace,
+        status: "error",
+        message: "CNote not found. Please check the entered series and invoice number.",
       };
     }
 
-    // If not found in either table
+    // Check if in GoodsReceipt_Details
+    const goodsReceiptResult = await sql.query`
+      SELECT *
+      FROM [GoodsReceipt_Details]
+      WHERE [DSeries] = ${series} AND [CNumber] = ${numericInvoice}
+    `;
+
+    // Check if in FreightChallan_Master
+    const freightResult = await sql.query`
+      SELECT *
+      FROM [FreightChallan_Master]
+      WHERE [DSeries] = ${series} AND [CNumber] = ${numericInvoice}
+    `;
+
+    if (goodsReceiptResult.recordset.length > 0) {
+      return {
+        status: "arrived",
+        consigner: cNoteResult.recordset[0].ConsignerName,
+        consignee: cNoteResult.recordset[0].ConsigneeName,
+        from: cNoteResult.recordset[0].FromPlace,
+        to: cNoteResult.recordset[0].ToPlace,
+      };
+    }
+
+    if (freightResult.recordset.length > 0) {
+      return {
+        status: "on the way",
+        consigner: cNoteResult.recordset[0].ConsignerName,
+        consignee: cNoteResult.recordset[0].ConsigneeName,
+        from: cNoteResult.recordset[0].FromPlace,
+        to: cNoteResult.recordset[0].ToPlace,
+      };
+    }
+
     return {
-      status: "waiting",
+      status: "successful",
+      consigner: cNoteResult.recordset[0].ConsignerName,
+      consignee: cNoteResult.recordset[0].ConsigneeName,
+      from: cNoteResult.recordset[0].FromPlace,
+      to: cNoteResult.recordset[0].ToPlace,
     };
   } catch (err) {
     console.error("Error checking delivery status:", err);
     return {
       status: "waiting",
-      error: "Error checking delivery status",
+      message: "Error checking delivery status",
     };
   }
 };
