@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import deliveryRoutes from './delivery.routes';
-import { getDeliveryStatus } from '../controllers/deliveryStatus.controller';
+import { getDeliveryStatus } from '../controllers/delivery/deliveryStatus.controller';
 
 const router = Router();
 

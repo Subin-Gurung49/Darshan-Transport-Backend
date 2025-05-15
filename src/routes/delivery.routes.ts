@@ -1,9 +1,6 @@
 import { Router } from 'express';
-import { Request, Response } from 'express';
-import { 
-  checkDeliveryStatus,  
-} from '../controllers/delivery.controller';
-import { getAllSeries } from '@services/series.service';
+import { checkDeliveryStatus } from '../services/delivery/delivery.service';
+import { getAllSeries } from '../services/series/series.service';
 
 const router = Router();
 
@@ -16,7 +13,7 @@ router.get('/series', async (req, res) => {
   }
 });
 
-router.get('/status/:series/:invoiceNumber', async (req: Request, res: Response) => {
+router.get('/status/:series/:invoiceNumber', async (req, res) => {
   const { series, invoiceNumber } = req.params;
   const status = await checkDeliveryStatus(series, invoiceNumber);
   res.json(status);
