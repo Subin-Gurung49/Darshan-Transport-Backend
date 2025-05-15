@@ -1,5 +1,5 @@
 import { Request, Response, RequestHandler } from 'express';
-import { sql } from '../config/db';
+import { sql } from '../../config/db';
 
 export const getDeliveryStatus: RequestHandler = async (req, res) => {
     const series = req.query.series as string;

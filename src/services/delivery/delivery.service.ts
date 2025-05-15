@@ -1,5 +1,5 @@
-import { sql } from '../config/db';
-import { DeliveryStatus } from '../interfaces/delivery.interface';
+import { sql } from '../../config/db';
+import { DeliveryStatus } from '../../interfaces/delivery.interface';
 
 export const checkDeliveryStatus = async (series: string, invoiceNumber: string): Promise<DeliveryStatus> => {
   try {
