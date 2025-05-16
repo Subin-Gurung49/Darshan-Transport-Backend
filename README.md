@@ -15,10 +15,7 @@ Backend API for Darshan Transport's delivery tracking system (MERN + TypeScript)
 Returns all available series from the database.
 
 ### `GET /api/delivery/status/:series/:invoiceNumber`
-Checks delivery status for a specific invoice.
-
-### `GET /api/delivery-status`
-Fetches delivery information based on query parameters `series` and `invoiceNumber`.
+Checks delivery status for a specific invoice using the series and invoice number as path parameters.
 
 ## Setup
 
@@ -56,3 +53,6 @@ npm start
 
 ### Rate Limiting
 - Limits requests to prevent server overload (10 requests per minute per IP).
+
+### Notes
+- All endpoints are prefixed with `/api`. For example, to check the delivery status, use `/api/delivery/status/:series/:invoiceNumber`. Ensure the server is running and the correct base path is used.

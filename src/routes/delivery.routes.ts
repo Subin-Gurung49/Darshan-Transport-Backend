@@ -7,7 +7,7 @@ const router = Router();
 
 router.get('/series', getSeriesList);
 
-router.get('/delivery/status/:series/:invoiceNumber', async (req, res) => {
+router.get('/status/:series/:invoiceNumber', async (req, res) => {
   const { series, invoiceNumber } = req.params;
 
   // Input validation
