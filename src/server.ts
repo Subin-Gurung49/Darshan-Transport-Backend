@@ -1,5 +1,5 @@
 import 'module-alias/register';
-import '@module-alias';
+import './module-alias';
 import app from './app';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
