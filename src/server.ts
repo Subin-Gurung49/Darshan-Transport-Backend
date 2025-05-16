@@ -12,7 +12,7 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 
 // Apply rate limiter and caching middleware to search route
-// app.use('/search', limiter, cacheMiddleware);
+app.use('/search', limiter, cacheMiddleware);
 
 // Establish database connection
 connectToDatabase().catch((err) => {
