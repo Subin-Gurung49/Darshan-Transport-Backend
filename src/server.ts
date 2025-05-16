@@ -1,11 +1,11 @@
 import 'module-alias/register';
-import './module-alias';
+import '@module-alias';
 import app from './app';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
 import Redis from 'ioredis';
 import { Request, Response, NextFunction } from 'express';
-import { connectToDatabase } from './config/db';
+import { connectToDatabase } from '@config/db';
 
 dotenv.config();
 

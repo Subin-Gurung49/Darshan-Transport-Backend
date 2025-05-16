@@ -1,4 +1,4 @@
-import { sql } from '../../config/db';
+import { sql } from '@config/db';
 
 export const getAllSeries = async () => {
   try {

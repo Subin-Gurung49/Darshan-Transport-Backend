@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { checkDeliveryStatus } from '../services/delivery/delivery.service';
-import { getAllSeries } from '../services/series/series.service';
+import { checkDeliveryStatus } from '@services/delivery/delivery.service';
+import { getAllSeries } from '@services/series/series.service';
 
 const router = Router();
 
