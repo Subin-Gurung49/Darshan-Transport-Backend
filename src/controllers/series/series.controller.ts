@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import { getAllSeries } from '@services/series/series.service';
+import { sendSuccess, sendError } from '@utils/apiResponse';
 
 export const getSeriesList = async (req: Request, res: Response) => {
   try {
     const series = await getAllSeries();
-    res.json(series);
+    sendSuccess(res, series, 'Series list fetched successfully');
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch series list' });
+    sendError(res, error, 'Failed to fetch series list');
   }
 };

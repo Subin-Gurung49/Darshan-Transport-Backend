@@ -17,7 +17,8 @@
       "@interfaces/*": ["src/interfaces/*"],
       "@routes/*": ["src/routes/*"],
       "@services/*": ["src/services/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@middleware/*": ["src/middleware/*"]
     }
   },
   "include": ["src/**/*"],

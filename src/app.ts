@@ -1,19 +1,20 @@
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import router from '@routes/delivery.routes';
-import routes from '@routes/index';
+import express from "express";
+import router from "@routes/delivery.routes";
+import routes from "@routes/index";
+import cors from "cors";
+import morgan from "morgan";
 
 const app = express();
 
-// Middleware
+// Apply middleware
+
 app.use(cors());
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api', router);
-app.use('/', routes);
+app.use("/api", router);
+app.use("/", routes);
 
 export default app;

@@ -1,5 +1,7 @@
+export type DeliveryStatusType = 'error' | 'waiting' | 'ongoing' | 'delivered' | 'arrived' | 'successful';
+
 export interface DeliveryStatus {
-  status: 'waiting' | 'on the way' | 'delivered' | 'error' | 'arrived' | 'successful';
+  status: DeliveryStatusType;
   consignee?: string;
   consigner?: string;
   from?: string;

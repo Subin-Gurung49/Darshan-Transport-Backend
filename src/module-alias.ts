@@ -7,5 +7,6 @@ addAliases({
   '@interfaces': join(__dirname, 'interfaces'),
   '@routes': join(__dirname, 'routes'),
   '@services': join(__dirname, 'services'),
-  '@utils': join(__dirname, 'utils')
+  '@utils': join(__dirname, 'utils'),
+  '@middleware': join(__dirname, 'middleware')
 });
