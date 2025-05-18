@@ -1,5 +1,6 @@
 import sql from 'mssql';
 import dotenv from 'dotenv';
+import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
 
 dotenv.config();
 
@@ -7,7 +8,12 @@ dotenv.config();
 const getRequiredEnv = (key: string): string => {
   const value = process.env[key];
   if (!value) {
-    throw new Error(`Missing required environment variable: ${key}`);
+    throw new AppError(
+      `Missing required environment variable: ${key}`,
+      500,
+      ErrorTypes.SERVER_ERROR,
+      { missingEnvVar: key }
+    );
   }
   return value;
 };
@@ -22,7 +28,7 @@ const dbConfig: sql.config = {
     encrypt: false,
     trustServerCertificate: true,
     cryptoCredentialsDetails: {
-      minVersion: 'TLSv1.2' as const // Type assertion for correct type
+      minVersion: 'TLSv1.2' as const
     }
   },
   pool: {
@@ -37,8 +43,12 @@ export const connectToDatabase = async () => {
     await sql.connect(dbConfig);
     console.log('Connected to SQL Server');
   } catch (err) {
-    console.error('Database connection failed:', err);
-    throw err;
+    throw new AppError(
+      'Database connection failed',
+      503,
+      ErrorTypes.CONNECTION_ERROR,
+      err
+    );
   }
 };
 

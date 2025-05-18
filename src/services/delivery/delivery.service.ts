@@ -1,6 +1,7 @@
 import { sql } from '@config/db';
 import { DeliveryStatus } from '@interfaces/delivery.interface';
 import { processDeliveryStatus } from './deliveryLogic.service';
+import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
 
 export const checkDeliveryStatus = async (series: string, invoiceNumber: string): Promise<DeliveryStatus> => {
   const cNote = `${series}/${invoiceNumber}`;
@@ -27,14 +28,48 @@ export const checkDeliveryStatus = async (series: string, invoiceNumber: string)
     `;
 
     if (result.recordset.length === 0) {
-      return processDeliveryStatus(null);
+      throw new AppError(
+        'Delivery not found',
+        404,
+        ErrorTypes.NOT_FOUND,
+        { series, invoiceNumber }
+      );
     }
 
     const record = result.recordset[0];
-    return processDeliveryStatus(record);
-  } catch (err) {
-    console.error('Error checking delivery status:', err);
-    return { status: 'error', message: 'Internal server error.' };
+    const processedStatus = processDeliveryStatus(record);
+
+    if (!processedStatus) {
+      throw new AppError(
+        'Failed to process delivery status',
+        500,
+        ErrorTypes.BUSINESS_ERROR,
+        { cnote: cNote }
+      );
+    }
+
+    return processedStatus;
+  } catch (error: any) { // Type assertion for error handling
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    // Handle SQL-specific errors
+    if (error?.name === 'RequestError') {
+      throw new AppError(
+        'Database operation failed',
+        503,
+        ErrorTypes.QUERY_ERROR,
+        { cnote: cNote }
+      );
+    }
+
+    throw new AppError(
+      'Internal server error',
+      500,
+      ErrorTypes.SERVER_ERROR,
+      { errorMessage: error?.message || 'Unknown error' }
+    );
   }
 };
 

@@ -1,8 +1,13 @@
 import { DeliveryStatus } from '@interfaces/delivery.interface';
+import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
 
 export const processDeliveryStatus = (record: any): DeliveryStatus => {
   if (!record) {
-    return { status: 'error', message: 'CNote not found. Please check the entered data.' };
+    throw new AppError(
+      'CNote not found. Please check the entered data.',
+      404,
+      ErrorTypes.NOT_FOUND
+    );
   }
 
   let status: DeliveryStatus['status'] = 'waiting';

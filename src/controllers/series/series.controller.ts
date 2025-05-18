@@ -1,12 +1,22 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { getAllSeries } from '@services/series/series.service';
-import { sendSuccess, sendError } from '@utils/apiResponse';
+import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
 
-export const getSeriesList = async (req: Request, res: Response) => {
+export const getSeriesList = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const series = await getAllSeries();
-    sendSuccess(res, series, 'Series list fetched successfully');
+    const seriesList = await getAllSeries();
+    return { data: seriesList };
   } catch (error) {
-    sendError(res, error, 'Failed to fetch series list');
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(new AppError(
+        'Failed to fetch series list',
+        500,
+        ErrorTypes.SERVER_ERROR,
+        error
+      ));
+    }
+    return undefined;
   }
 };

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { check, validationResult } from 'express-validator';
-import { sendError } from '@utils/apiResponse';
+import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
 
 export const validateDeliveryStatus = [
   check('series')
@@ -17,7 +17,13 @@ export const validateDeliveryStatus = [
 export const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return sendError(res, errors.array(), 'Invalid input parameters', 400);
+    next(new AppError(
+      'Invalid input parameters',
+      400,
+      ErrorTypes.VALIDATION_ERROR,
+      errors.array()
+    ));
+    return;
   }
   next();
 };

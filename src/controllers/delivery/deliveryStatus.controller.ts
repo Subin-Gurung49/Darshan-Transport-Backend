@@ -1,13 +1,19 @@
 import { Request, Response, RequestHandler } from 'express';
 import { getDeliveryStatusDetails } from '@services/delivery/delivery.service';
-import { sendSuccess, sendError } from '@utils/apiResponse';
+import { sendSuccess } from '@utils/apiResponse';
+import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
 
-export const getDeliveryStatus: RequestHandler = async (req, res) => {
+export const getDeliveryStatus: RequestHandler = async (req, res, next) => {
     const series = req.query.series as string;
     const invoiceNumber = req.query.invoiceNumber as string;
 
     if (!series || !invoiceNumber) {
-        sendError(res, null, 'Series and Invoice Number are required.', 400);
+        next(new AppError(
+            'Series and Invoice Number are required.',
+            400,
+            ErrorTypes.VALIDATION_ERROR,
+            { series, invoiceNumber }
+        ));
         return;
     }
 
@@ -15,10 +21,15 @@ export const getDeliveryStatus: RequestHandler = async (req, res) => {
         const result = await getDeliveryStatusDetails(series, invoiceNumber);
         sendSuccess(res, result, 'Delivery status fetched successfully');
     } catch (error) {
-        if (error instanceof Error && error.message === 'NOT_FOUND') {
-            sendError(res, null, 'CNote not found. Please check the entered data.', 404);
+        if (error instanceof AppError) {
+            next(error);
         } else {
-            sendError(res, error, 'Internal server error.');
+            next(new AppError(
+                'Internal server error',
+                500,
+                ErrorTypes.SERVER_ERROR,
+                error
+            ));
         }
     }
 };
