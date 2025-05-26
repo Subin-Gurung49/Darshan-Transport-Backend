@@ -1,12 +1,14 @@
-import express from "express";
-import routes from "@routes/index";
-import cors from "cors";
-import morgan from "morgan";
+import express, { Application, Request, Response, NextFunction } from 'express';
+import morgan from 'morgan';
+import cors from 'cors';
+import helmet from 'helmet'; // Import helmet
 import { globalErrorHandler } from '@middleware/errorHandler.middleware';
+import routes from "@routes/index";
 
-const app = express();
+const app: Application = express();
 
-// Apply middleware
+// Middlewares
+app.use(helmet()); // Use helmet
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
