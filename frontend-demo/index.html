@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Test Frontend</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Backend API Test Page</h1>
+
+        <div class="section">
+            <label for="apiBaseUrl">Backend API Base URL:</label>
+            <input type="text" id="apiBaseUrl" value="http://localhost:3000" placeholder="e.g., http://localhost:3000">
+            <p class="note">Ensure this URL is correct and your backend server is running.</p>
+        </div>
+
+        <div class="section">
+            <h2>Fetch Series</h2>
+            <button id="fetchSeriesBtn">Fetch Available Series</button>
+            <div class="controls">
+                <label for="seriesDropdown">Select Series:</label>
+                <select id="seriesDropdown">
+                    <option value="">-- Select a Series --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Check Delivery Status</h2>
+            <div class="controls">
+                <label for="seriesInput">Series:</label>
+                <input type="text" id="seriesInput" placeholder="Enter series (e.g., MH01)">
+            </div>
+            <div class="controls">
+                <label for="invoiceInput">Invoice Number:</label>
+                <input type="text" id="invoiceInput" placeholder="Enter invoice number">
+            </div>
+            <button id="checkStatusBtn">Check Status</button>
+        </div>
+
+        <div class="section">
+            <h2>API Response</h2>
+            <pre id="responseArea">Awaiting API call...</pre>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
