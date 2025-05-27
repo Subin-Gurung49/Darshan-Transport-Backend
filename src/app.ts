@@ -1,23 +1,54 @@
+import './module-alias'; // Ensure this is the very first import
 import express, { Application, Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import helmet from 'helmet'; // Import helmet
-import { globalErrorHandler } from '@middleware/errorHandler.middleware';
-import routes from "@routes/index";
+import helmet from 'helmet';
+import Logger from '@config/logger'; // Use path alias
+import { globalErrorHandler, AppError, ErrorTypes } from '@middleware/errorHandler.middleware'; // Use path alias
+import { limiter } from '@middleware/rateLimiter.middleware'; // Use path alias
+import { cacheMiddleware } from '@middleware/cache.middleware'; // Use path alias
+import mainRouter from '@routes/index'; // Use path alias
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app: Application = express();
 
 // Middlewares
-app.use(helmet()); // Use helmet
-app.use(cors());
-app.use(morgan("dev"));
+app.use(helmet());
+app.use(cors()); // TODO: Configure CORS for production
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use("/api", routes);
+// Define a stream object with a write method that morgan can use
+const morganStream = {
+  write: (message: string) => {
+    Logger.http(message.trim()); // Use Logger.http for logging morgan messages
+  },
+};
 
-// Error handling middleware (should be last)
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev', { stream: morganStream }));
+
+// Health check endpoint
+app.get('/health', (req: Request, res: Response) => {
+  Logger.info('Health check accessed');
+  res.status(200).json({ status: 'UP', timestamp: new Date().toISOString() });
+});
+
+// Apply rate limiter and cache middleware to relevant routes or globally if needed
+// For example, applying to all /api/v1 routes:
+// app.use('/api/v1', limiter, cacheMiddleware); 
+// Or apply them selectively in specific route files
+
+// Routes
+app.use('/api/v1', mainRouter);
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const message = `Route not found: ${req.method} ${req.originalUrl}`;
+  Logger.warn(message);
+  next(new AppError(message, 404, ErrorTypes.NOT_FOUND)); 
+});
+
 app.use(globalErrorHandler);
 
 export default app;
