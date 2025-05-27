@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     fetchSeriesBtn.addEventListener('click', async () => {
-        console.log("!!!!!!!!!! FETCH SERIES BUTTON CLICKED !!!!!!!!!! - If you see this, the click handler is working."); // <-- ADDED THIS LINE
 
         if (!currentApiBaseUrl) {
             responseArea.textContent = 'Error: Please set the Backend API Base URL first.';
@@ -32,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         responseArea.textContent = 'Fetching series...';
         try {
-            const response = await fetch(`${currentApiBaseUrl}api/delivery/series`);
+            const response = await fetch(`${currentApiBaseUrl}api/v1/delivery/series`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -116,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         responseArea.textContent = 'Checking delivery status...';
         try {
-            const response = await fetch(`${currentApiBaseUrl}api/delivery/status/${encodeURIComponent(series)}/${encodeURIComponent(invoice)}`);
+            const response = await fetch(`${currentApiBaseUrl}api/v1/delivery/status/${encodeURIComponent(series)}/${encodeURIComponent(invoice)}`);
             const data = await response.json(); // Try to parse JSON regardless of response.ok for more info
 
             if (!response.ok) {
