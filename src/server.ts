@@ -1,7 +1,6 @@
-import './module-alias'; // Must be the first import
 import app from './app';
-import { connectToDatabase } from '@config/db'; // Use path alias
-import Logger from '@config/logger'; // Use path alias
+import { connectToDatabase } from './config/db'; // Use relative path
+import Logger from './config/logger'; // Use relative path
 import dotenv from 'dotenv';
 
 dotenv.config();
