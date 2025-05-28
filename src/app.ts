@@ -1,13 +1,12 @@
-import './module-alias'; // Ensure this is the very first import
 import express, { Application, Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import helmet from 'helmet';
-import Logger from '@config/logger'; // Use path alias
-import { globalErrorHandler, AppError, ErrorTypes } from '@middleware/errorHandler.middleware'; // Use path alias
-import { limiter } from '@middleware/rateLimiter.middleware'; // Use path alias
-import { cacheMiddleware } from '@middleware/cache.middleware'; // Use path alias
-import mainRouter from '@routes/index'; // Use path alias
+import Logger from './config/logger'; // Use relative path
+import { globalErrorHandler, AppError, ErrorTypes } from './middleware/errorHandler.middleware'; // Use relative path
+import { limiter } from './middleware/rateLimiter.middleware'; // Use relative path
+import { cacheMiddleware } from './middleware/cache.middleware'; // Use relative path
+import mainRouter from './routes/index'; // Use relative path
 import dotenv from 'dotenv';
 
 dotenv.config();
