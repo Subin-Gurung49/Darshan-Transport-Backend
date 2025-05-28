@@ -1,24 +1,23 @@
-import { Request, Response, RequestHandler } from 'express';
+import { Request, Response, RequestHandler, NextFunction } from 'express';
 import { getDeliveryStatusDetails } from '../../services/delivery/delivery.service';
 import { sendSuccess } from '../../utils/apiResponse';
 import { AppError, ErrorTypes } from '../../middleware/errorHandler.middleware';
 
-export const getDeliveryStatus: RequestHandler = async (req, res, next) => {
-    const series = req.query.series as string;
-    const invoiceNumber = req.query.invoiceNumber as string;
+export const getDeliveryStatus: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+    const { series, invoiceNumber: invoiceParam } = req.params;
 
-    if (!series || !invoiceNumber) {
+    if (!series || !invoiceParam) {
         next(new AppError(
-            'Series and Invoice Number are required.',
+            'Series and Invoice Number from path parameters are required.',
             400,
             ErrorTypes.VALIDATION_ERROR,
-            { series, invoiceNumber }
+            { series, invoiceNumber: invoiceParam }
         ));
         return;
     }
 
     try {
-        const result = await getDeliveryStatusDetails(series, invoiceNumber);
+        const result = await getDeliveryStatusDetails(req.params.series, req.params.invoiceNumber);
         sendSuccess(res, result, 'Delivery status fetched successfully');
     } catch (error) {
         if (error instanceof AppError) {
