@@ -1,6 +1,7 @@
 import sql from 'mssql';
 import dotenv from 'dotenv';
 import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
+import Logger from '@config/logger'; // Try relative path for logger within this file
 
 dotenv.config();
 
@@ -8,8 +9,10 @@ dotenv.config();
 const getRequiredEnv = (key: string): string => {
   const value = process.env[key];
   if (!value) {
+    const errorMessage = `Missing required environment variable: ${key}`;
+    Logger.error(errorMessage, { missingEnvVar: key });
     throw new AppError(
-      `Missing required environment variable: ${key}`,
+      errorMessage,
       500,
       ErrorTypes.SERVER_ERROR,
       { missingEnvVar: key }
@@ -38,11 +41,12 @@ const dbConfig: sql.config = {
   }
 };
 
-export const connectToDatabase = async () => {
+export const connectToDatabase = async (): Promise<void> => {
   try {
     await sql.connect(dbConfig);
-    console.log('Connected to SQL Server');
-  } catch (err) {
+    Logger.info('Successfully connected to SQL Server.');
+  } catch (err: any) {
+    Logger.error('Failed to connect to SQL Server:', { error: err }); // Pass error as object
     throw new AppError(
       'Database connection failed',
       503,
