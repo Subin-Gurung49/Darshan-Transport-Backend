@@ -1,9 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { checkDeliveryStatus } from '@services/delivery/delivery.service';
-import { getSeriesList } from '@controllers/series/series.controller';
-import { sendSuccess } from '@utils/apiResponse';
-import { validateDeliveryStatus, validateRequest } from '@middleware/validation.middleware';
-import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
+import { checkDeliveryStatus } from '../services/delivery/delivery.service';
+import { getSeriesList } from '../controllers/series/series.controller';
+import { sendSuccess } from '../utils/apiResponse';
+import { validateDeliveryStatus, validateRequest } from '../middleware/validation.middleware';
+import { AppError, ErrorTypes } from '../middleware/errorHandler.middleware';
 
 const router = Router();
 

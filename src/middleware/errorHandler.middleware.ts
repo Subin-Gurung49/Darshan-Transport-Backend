@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { sendError } from '@utils/apiResponse'; // Use path alias
-import Logger from '@config/logger'; // Use path alias
+import { sendError } from '../utils/apiResponse'; // Adjusted path
+import Logger from '../config/logger'; // Adjusted path
 
 // Custom error class for handling business logic errors
 export class AppError extends Error {

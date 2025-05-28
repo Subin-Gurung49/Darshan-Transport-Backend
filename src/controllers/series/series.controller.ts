@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { getAllSeries } from '@services/series/series.service';
-import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
+import { getAllSeries } from '../../services/series/series.service';
+import { AppError, ErrorTypes } from '../../middleware/errorHandler.middleware';
 
 export const getSeriesList = async (req: Request, res: Response, next: NextFunction) => {
   try {

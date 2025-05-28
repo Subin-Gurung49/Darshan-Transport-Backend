@@ -1,7 +1,7 @@
 import sql from 'mssql';
 import dotenv from 'dotenv';
-import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
-import Logger from '@config/logger'; // Try relative path for logger within this file
+import { AppError, ErrorTypes } from '../middleware/errorHandler.middleware'; // Adjusted path
+import Logger from './logger'; // Adjusted path
 
 dotenv.config();
 

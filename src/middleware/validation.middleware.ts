@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { check, validationResult } from 'express-validator';
-import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
+import { AppError, ErrorTypes } from './errorHandler.middleware';
 
 export const validateDeliveryStatus = [
   check('series')

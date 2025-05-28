@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Redis from 'ioredis';
-import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
+import { AppError, ErrorTypes } from './errorHandler.middleware';
 
 // Extend the Response type to include sendResponse
 import { Response as ExpressResponse } from 'express';

@@ -1,5 +1,5 @@
-import { sql } from '@config/db';
-import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
+import { sql } from '../../config/db';
+import { AppError, ErrorTypes } from '../../middleware/errorHandler.middleware';
 
 export const getAllSeries = async () => {
   try {

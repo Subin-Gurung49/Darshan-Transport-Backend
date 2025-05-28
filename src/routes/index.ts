@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import deliveryRoutes from '@routes/delivery.routes';
+import deliveryRoutes from './delivery.routes';
 
 const router = Router();
 

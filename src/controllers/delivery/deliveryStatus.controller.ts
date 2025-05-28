@@ -1,7 +1,7 @@
 import { Request, Response, RequestHandler } from 'express';
-import { getDeliveryStatusDetails } from '@services/delivery/delivery.service';
-import { sendSuccess } from '@utils/apiResponse';
-import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
+import { getDeliveryStatusDetails } from '../../services/delivery/delivery.service';
+import { sendSuccess } from '../../utils/apiResponse';
+import { AppError, ErrorTypes } from '../../middleware/errorHandler.middleware';
 
 export const getDeliveryStatus: RequestHandler = async (req, res, next) => {
     const series = req.query.series as string;

@@ -1,5 +1,5 @@
-import { DeliveryStatus } from '@interfaces/delivery.interface';
-import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
+import { DeliveryStatus } from '../../interfaces/delivery.interface';
+import { AppError, ErrorTypes } from '../../middleware/errorHandler.middleware';
 
 export const processDeliveryStatus = (record: any): DeliveryStatus => {
   if (!record) {

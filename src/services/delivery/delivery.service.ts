@@ -1,7 +1,7 @@
-import { sql } from '@config/db';
-import { DeliveryStatus } from '@interfaces/delivery.interface';
+import { sql } from '../../config/db';
+import { DeliveryStatus } from '../../interfaces/delivery.interface';
 import { processDeliveryStatus } from './deliveryLogic.service';
-import { AppError, ErrorTypes } from '@middleware/errorHandler.middleware';
+import { AppError, ErrorTypes } from '../../middleware/errorHandler.middleware';
 
 export const checkDeliveryStatus = async (series: string, invoiceNumber: string): Promise<DeliveryStatus> => {
   const cNote = `${series}/${invoiceNumber}`;
