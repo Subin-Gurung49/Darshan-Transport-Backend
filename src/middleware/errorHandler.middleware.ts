@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import { sendError } from '@utils/apiResponse';
+import { sendError } from '@utils/apiResponse'; // Use path alias
+import Logger from '@config/logger'; // Use path alias
 
 // Custom error class for handling business logic errors
 export class AppError extends Error {
   constructor(
     public message: string,
     public statusCode: number = 400,
-    public errorCode?: string,
+    public errorCode?: string, 
     public data?: any
   ) {
     super(message);
@@ -35,44 +36,11 @@ export enum ErrorTypes {
   RUNTIME_ERROR = 'RUNTIME_ERROR'
 }
 
-interface ErrorResponse {
-  message: string;
-  statusCode: number;
-  errorCode: string;
-  data?: any;
+interface ErrorResponseDetails {
+  errorCode?: string;
+  details?: any;
   stack?: string;
 }
-
-// Helper functions for specific error types
-const handleSQLError = (err: Error): ErrorResponse => {
-  switch(err.name) {
-    case 'RequestError':
-      return { message: 'Database operation failed', statusCode: 503, errorCode: ErrorTypes.QUERY_ERROR };
-    case 'ConnectionError':
-      return { message: 'Database connection failed', statusCode: 503, errorCode: ErrorTypes.CONNECTION_ERROR };
-    default:
-      return { message: 'Database error occurred', statusCode: 503, errorCode: ErrorTypes.DATABASE_ERROR };
-  }
-};
-
-const handleBusinessError = (err: AppError): ErrorResponse => {
-  return {
-    message: err.message,
-    statusCode: err.statusCode,
-    errorCode: err.errorCode || ErrorTypes.BUSINESS_ERROR,
-    data: err.data
-  };
-};
-
-const handleProgrammingError = (err: Error): ErrorResponse => {
-  const isProd = process.env.NODE_ENV === 'production';
-  return {
-    message: isProd ? 'An unexpected error occurred' : err.message,
-    statusCode: 500,
-    errorCode: ErrorTypes.RUNTIME_ERROR,
-    stack: isProd ? undefined : err.stack
-  };
-};
 
 // Global error handling middleware
 export const globalErrorHandler = (
@@ -81,35 +49,56 @@ export const globalErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  // Log error for debugging
-  console.error('Error:', {
-    name: err.name,
-    message: err.message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-    timestamp: new Date().toISOString(),
-    path: req.path,
-    method: req.method
-  });
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  let responseStatusCode: number;
+  let responseMessage: string;
+  let errorDetails: ErrorResponseDetails = {};
 
-  let errorResponse: ErrorResponse;
+  if (err instanceof AppError) {
+    responseStatusCode = err.statusCode;
+    responseMessage = err.message;
+    errorDetails.errorCode = err.errorCode || ErrorTypes.BUSINESS_ERROR;
+    if (err.data) {
+      errorDetails.details = err.data;
+    }
 
-  // Handle SQL Errors
-  if (err.name === 'RequestError' || err.name === 'ConnectionError') {
-    errorResponse = handleSQLError(err);
-  }
-  // Handle Business Logic Errors
-  else if (err instanceof AppError) {
-    errorResponse = handleBusinessError(err);
-  }
-  // Handle Programming/Runtime Errors
-  else {
-    errorResponse = handleProgrammingError(err);
+    Logger.warn(`AppError handled: ${err.message}`, {
+      statusCode: err.statusCode,
+      errorCode: errorDetails.errorCode,
+      path: req.path,
+      method: req.method,
+      data: err.data,
+      stack: isDevelopment ? err.stack : undefined
+    });
+
+  } else {
+    responseStatusCode = 500;
+    responseMessage = isDevelopment ? err.message : 'An unexpected server error occurred.';
+    errorDetails.errorCode = ErrorTypes.SERVER_ERROR;
+    if (err.name === 'SyntaxError') { 
+        errorDetails.errorCode = ErrorTypes.INVALID_INPUT;
+        responseStatusCode = 400; // Bad request for syntax errors
+    }
+    
+    Logger.error('Unhandled error caught by globalErrorHandler:', {
+      message: err.message,
+      name: err.name,
+      path: req.path,
+      method: req.method,
+      errorObject: err, 
+      stack: err.stack 
+    });
   }
 
-  return sendError(
-    res,
-    errorResponse.data,
-    errorResponse.message,
-    errorResponse.statusCode
-  );
+  if (isDevelopment) {
+    errorDetails.stack = err.stack;
+  }
+
+  // Construct the error object to be passed to sendError, ensuring errorCode is included
+  const errorPayload: any = { ...errorDetails }; // Start with errorCode and stack
+  if (errorDetails.details) { // If AppError had specific data, include it
+    errorPayload.details = errorDetails.details;
+  }
+
+  sendError(res, errorPayload, responseMessage, responseStatusCode);
 };
