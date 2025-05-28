@@ -1,25 +1,30 @@
-import 'module-alias/register';
-import './module-alias';
+import './module-alias'; // Must be the first import
 import app from './app';
+import { connectToDatabase } from '@config/db'; // Use path alias
+import Logger from '@config/logger'; // Use path alias
 import dotenv from 'dotenv';
-import { Request, Response, NextFunction } from 'express';
-import { connectToDatabase } from '@config/db';
-import { cacheMiddleware } from '@middleware/cache.middleware';
-import { limiter } from '@middleware/rateLimiter.middleware';
 
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
-// Apply rate limiter and caching middleware to search route
-app.use('/search', limiter, cacheMiddleware);
-
 // Establish database connection
-connectToDatabase().catch((err) => {
-  console.error('Failed to connect to the database:', err);
-  process.exit(1); // Exit the process if the database connection fails
-});
+const startServer = async () => {
+  try {
+    await connectToDatabase();
+    app.listen(PORT, () => {
+      Logger.info(`Server running on port ${PORT}`); // Use Logger
+      Logger.info(`Access it at http://localhost:${PORT}`);
+      if (process.env.NODE_ENV !== 'production') {
+        Logger.info('Application is running in development mode.');
+      } else {
+        Logger.info('Application is running in production mode.');
+      }
+    });
+  } catch (error) {
+    Logger.error('Failed to start the server:', { error }); // Pass error object for better logging
+    process.exit(1); // Exit the process if the server fails to start
+  }
+};
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+startServer();
