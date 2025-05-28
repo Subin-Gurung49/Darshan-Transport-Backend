@@ -28,8 +28,8 @@ const dbConfig: sql.config = {
   database: getRequiredEnv('DB_NAME'),
   port: parseInt(getRequiredEnv('DB_PORT')),
   options: {
-    encrypt: false,
-    trustServerCertificate: true,
+    encrypt: process.env.NODE_ENV === 'production', // Set to true in production
+    trustServerCertificate: process.env.NODE_ENV !== 'production', // Set to false in production
     cryptoCredentialsDetails: {
       minVersion: 'TLSv1.2' as const
     }

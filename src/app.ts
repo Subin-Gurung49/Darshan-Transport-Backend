@@ -15,7 +15,26 @@ const app: Application = express();
 
 // Middlewares
 app.use(helmet());
-app.use(cors()); // TODO: Configure CORS for production
+
+// CORS Configuration
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+  ? process.env.PROD_ALLOWED_ORIGINS?.split(',') 
+  : ['http://localhost:3000', 'http://localhost:8080']; // Add your frontend-demo origin for dev
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins && allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new AppError('Not allowed by CORS', 403, ErrorTypes.FORBIDDEN));
+    }
+  },
+  credentials: true, // If you need to send cookies or authorization headers
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
