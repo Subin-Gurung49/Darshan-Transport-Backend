@@ -34,10 +34,9 @@ app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'UP', timestamp: new Date().toISOString() });
 });
 
-// Apply rate limiter and cache middleware to relevant routes or globally if needed
-// For example, applying to all /api/v1 routes:
-// app.use('/api/v1', limiter, cacheMiddleware); 
-// Or apply them selectively in specific route files
+// Apply rate limiter to all /api/v1 routes
+app.use('/api/v1', limiter); 
+// app.use('/api/v1', cacheMiddleware); // cacheMiddleware remains commented for now
 
 // Routes
 app.use('/api/v1', mainRouter);
