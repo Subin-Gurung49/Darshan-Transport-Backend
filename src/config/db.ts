@@ -43,10 +43,21 @@ const dbConfig: sql.config = {
 
 export const connectToDatabase = async (): Promise<void> => {
   try {
+    Logger.info('Attempting to connect to SQL Server...', { 
+      server: dbConfig.server, 
+      database: dbConfig.database,
+      port: dbConfig.port,
+      user: dbConfig.user 
+    });
+    
     await sql.connect(dbConfig);
     Logger.info('Successfully connected to SQL Server.');
   } catch (err: any) {
-    Logger.error('Failed to connect to SQL Server:', { error: err }); // Pass error as object
+    Logger.error('Failed to connect to SQL Server:', { 
+      error: err.message,
+      code: err.code,
+      originalError: err
+    });
     throw new AppError(
       'Database connection failed',
       503,
