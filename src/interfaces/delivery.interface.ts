@@ -2,8 +2,8 @@ export type DeliveryStatusType = 'error' | 'waiting' | 'ongoing' | 'delivered' |
 
 export interface DeliveryStatus {
   status: DeliveryStatusType;
-  consignee?: string;
   consigner?: string;
+  consignee?: string;
   from?: string;
   to?: string;
   message?: string; // For error messages

@@ -20,8 +20,8 @@ export const processDeliveryStatus = (record: any): DeliveryStatus => {
 
   return {
     status,
-    consignee: record.ConsigneeName || 'Unknown',
     consigner: record.ConsignerName || 'Unknown',
+    consignee: record.ConsigneeName || 'Unknown',
     from: record.FromPlaceName || 'Unknown',
     to: record.ToPlaceName || 'Unknown',
   };

@@ -19,7 +19,7 @@ app.use(helmet());
 // CORS Configuration
 const allowedOrigins = process.env.NODE_ENV === 'production' 
   ? process.env.PROD_ALLOWED_ORIGINS?.split(',') 
-  : ['http://localhost:3000', 'http://localhost:8080','http://127.0.0.1:8080f']; // Add your frontend-demo origin for dev
+  : ['http://localhost:3000', 'http://localhost:8080','http://127.0.0.1:8080']; // Add your frontend-demo origin for dev
 
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
