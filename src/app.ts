@@ -53,6 +53,11 @@ app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'UP', timestamp: new Date().toISOString() });
 });
 
+// Default route for '/'
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({ success: true, message: 'Welcome to Darshan Transport Backend!' });
+});
+
 // Apply rate limiter to all /api/v1 routes
 app.use('/api/v1', limiter); 
 // app.use('/api/v1', cacheMiddleware); // cacheMiddleware remains commented for now
